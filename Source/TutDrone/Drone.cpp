@@ -61,6 +61,16 @@ void ADrone::Tick(float DeltaTime)
 
 	TempDeltaTime = DeltaTime;
 
+	if (GetInputAxisValue(TEXT("Lift")) == 0)
+	{
+		UpThruster->ThrustStrength = 980.0f;
+	}
+
+	if (GetInputAxisValue(TEXT("Forward")) == 0)
+	{
+		ForwarThruster->ThrustStrength = 0.0f;
+	}
+
 }
 
 // Called to bind functionality to input
@@ -77,17 +87,20 @@ void ADrone::Lift(float value)
 {
 	//每一帧都不断的给这个力增加
 	//涉及到和每一帧有关的，应考虑不同帧率对它的影响
+
+	/*this->GetWorld()->DeltaTimeSeconds <==> TempDeltaTime*/
 	UpThruster->ThrustStrength += (LiftAcc * value * TempDeltaTime);
 	UpThruster->ThrustStrength = FMath::Clamp(UpThruster->ThrustStrength, -LiftThrustMax, LiftThrustMax);
 }
 
 void ADrone::Forward(float value)
 {
-
+	ForwarThruster->ThrustStrength += (ForwardAcc * value * TempDeltaTime);
+	ForwarThruster->ThrustStrength = FMath::Clamp(ForwarThruster->ThrustStrength, -ForwardThrustMax, ForwardThrustMax);
 }
 
 void ADrone::Turn(float value)
 {
-
+	OutCollision->AddTorqueInDegrees(this->GetActorForwardVector() * value * TurnStrength);
 }
 

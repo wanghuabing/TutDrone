@@ -57,6 +57,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
 		float LiftThrustMax = 2000;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
+		float ForwardAcc = 500;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
+		float ForwardThrustMax = 2000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
+		float TurnStrength = 500000;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
