@@ -6,7 +6,6 @@
 #include "Components/BoxComponent.h"
 #include "PhysicsEngine/PhysicsThrusterComponent.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "Drone.h"
 
 // Sets default values
 ADrone::ADrone()
@@ -60,6 +59,8 @@ void ADrone::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	TempDeltaTime = DeltaTime;
+
 }
 
 // Called to bind functionality to input
@@ -76,7 +77,7 @@ void ADrone::Lift(float value)
 {
 	//每一帧都不断的给这个力增加
 	//涉及到和每一帧有关的，应考虑不同帧率对它的影响
-	UpThruster->ThrustStrength += (LiftAcc * value * GetWord()->DeltaTimeSeconds);
+	UpThruster->ThrustStrength += (LiftAcc * value * TempDeltaTime);
 	UpThruster->ThrustStrength = FMath::Clamp(UpThruster->ThrustStrength, -LiftThrustMax, LiftThrustMax);
 }
 

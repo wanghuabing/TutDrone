@@ -76,4 +76,6 @@ private:
 	UFUNCTION()
 		void Turn(float value);
 
+	float TempDeltaTime;
+
 };
