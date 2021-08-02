@@ -65,6 +65,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
 		float TurnStrength = 500000;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
+		float PaddleRotationSpeed = 1000;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
+		float MeshRotationSpeed = 20;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -86,4 +92,8 @@ private:
 
 	float TempDeltaTime;
 
+
+	TArray<UStaticMeshComponent*> Paddles;
+
+	void RotatePaddle(float deltatime);
 };

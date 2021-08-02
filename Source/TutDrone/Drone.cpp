@@ -32,6 +32,12 @@ ADrone::ADrone()
 	Paddle3->SetupAttachment(Mesh, TEXT("Paddle3"));
 	Paddle4->SetupAttachment(Mesh, TEXT("Paddle4"));
 
+	Paddles.Add(Paddle1);
+	Paddles.Add(Paddle2);
+	Paddles.Add(Paddle3);
+	Paddles.Add(Paddle4);
+
+
 	UpThruster = CreateDefaultSubobject<UPhysicsThrusterComponent>(TEXT("UpThruster"));
 	UpThruster->SetupAttachment(RootComponent);
 	UpThruster->ThrustStrength = 980.0f;//重力加速度
@@ -42,7 +48,7 @@ ADrone::ADrone()
 	ForwarThruster->SetupAttachment(RootComponent);
 	ForwarThruster->ThrustStrength = 0.0f;
 	ForwarThruster->SetAutoActivate(true);
-	ForwarThruster->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(this->GetActorForwardVector()));
+	ForwarThruster->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(-this->GetActorForwardVector()));
 
 	//AttachToComponent不能放到构造函数里面执行
 }
@@ -69,8 +75,23 @@ void ADrone::Tick(float DeltaTime)
 	if (GetInputAxisValue(TEXT("Forward")) == 0)
 	{
 		ForwarThruster->ThrustStrength = 0.0f;
+
+		float currentPitch = Mesh->GetRelativeRotation().Pitch;
+		if (currentPitch != 0)
+		{
+			if (FMath::Abs(currentPitch) <= KINDA_SMALL_NUMBER)
+			{
+				Mesh->SetRelativeRotation(FRotator::ZeroRotator);
+			}
+			else
+			{
+				//负号 进行与原方向相反的偏移
+				Mesh->AddRelativeRotation(FRotator(-currentPitch * DeltaTime, .0f, .0f));
+			}
+		}
 	}
 
+	RotatePaddle(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -97,10 +118,28 @@ void ADrone::Forward(float value)
 {
 	ForwarThruster->ThrustStrength += (ForwardAcc * value * TempDeltaTime);
 	ForwarThruster->ThrustStrength = FMath::Clamp(ForwarThruster->ThrustStrength, -ForwardThrustMax, ForwardThrustMax);
+
+	float pitch = Mesh->GetRelativeRotation().Pitch;
+	if (FMath::Abs(pitch) < 30)
+	{
+		Mesh->AddRelativeRotation(-FRotator(value * TempDeltaTime * MeshRotationSpeed, .0f, .0f));
+	}
+
 }
 
 void ADrone::Turn(float value)
 {
-	OutCollision->AddTorqueInDegrees(this->GetActorForwardVector() * value * TurnStrength);
+	//auto t = FString::Printf(TEXT("%f %f % f"), value, TempDeltaTime, TurnStrength);
+	//GEngine->AddOnScreenDebugMessage(0, 10, FColor::Red, t);
+
+	OutCollision->AddTorqueInDegrees(-this->GetActorUpVector() * value * TurnStrength);
+}
+
+void ADrone::RotatePaddle(float deltatime)
+{
+	for (auto paddle : Paddles)
+	{
+		paddle->AddRelativeRotation(FRotator(.0f, deltatime * PaddleRotationSpeed, .0f));
+	}
 }
 
