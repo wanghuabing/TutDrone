@@ -102,6 +102,7 @@ void ADrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis(TEXT("Lift"), this, &ADrone::Lift);
 	PlayerInputComponent->BindAxis(TEXT("Forward"), this, &ADrone::Forward);
 	PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ADrone::Turn);
+	PlayerInputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &ADrone::Fire);
 }
 
 void ADrone::Lift(float value)
@@ -122,9 +123,8 @@ void ADrone::Forward(float value)
 	float pitch = Mesh->GetRelativeRotation().Pitch;
 	if (FMath::Abs(pitch) < 30)
 	{
-		Mesh->AddRelativeRotation(-FRotator(value * TempDeltaTime * MeshRotationSpeed, .0f, .0f));
+		Mesh->AddRelativeRotation(FRotator(value * TempDeltaTime * -MeshRotationSpeed, .0f, .0f));
 	}
-
 }
 
 void ADrone::Turn(float value)
@@ -133,6 +133,12 @@ void ADrone::Turn(float value)
 	//GEngine->AddOnScreenDebugMessage(0, 10, FColor::Red, t);
 
 	OutCollision->AddTorqueInDegrees(-this->GetActorUpVector() * value * TurnStrength);
+}
+
+void ADrone::Fire()
+{
+	FTransform firingScoket = Mesh->GetSocketTransform(TEXT("FiringScoket"));
+	this->GetWorld()->SpawnActor<AMissle>(Bullet, firingScoket);
 }
 
 void ADrone::RotatePaddle(float deltatime)

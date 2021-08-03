@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Missle.h"
 #include "Drone.generated.h"
 
 UCLASS()//告诉虚幻编辑器生成一些模板文件
@@ -71,6 +72,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Init")
 		float MeshRotationSpeed = 20;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<AMissle> Bullet;//这是一个class 而不是instance
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -90,6 +94,9 @@ private:
 	UFUNCTION()
 		void Turn(float value);
 
+	UFUNCTION()
+		void Fire();
+	
 	float TempDeltaTime;
 
 

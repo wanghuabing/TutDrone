@@ -14,4 +14,7 @@ class TUTDRONE_API ATutDroneGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	UPROPERTY()
+		uint32 Point;
 };
