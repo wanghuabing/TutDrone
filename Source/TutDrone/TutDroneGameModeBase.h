@@ -15,6 +15,6 @@ class TUTDRONE_API ATutDroneGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY()
-		uint32 Point;
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+		int32 Point;//uint32 不被蓝图支持
 };
