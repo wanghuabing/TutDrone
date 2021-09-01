@@ -3,3 +3,7 @@
 
 #include "TutDroneGameModeBase.h"
 
+void ATutDroneGameModeBase::SetCurrentState(EGameState value)
+{
+	currentState = value;
+}
