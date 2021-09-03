@@ -2,6 +2,8 @@
 
 
 #include "PacManCharacter.h"
+#include "TutDroneGameModeBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APacManCharacter::APacManCharacter()
@@ -15,7 +17,8 @@ APacManCharacter::APacManCharacter()
 void APacManCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	//将实例转化了
+	GameMode = Cast<ATutDroneGameModeBase>(UGameplayStatics::GetGameMode(this));
 }
 
 // Called every frame
@@ -33,6 +36,11 @@ void APacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	//第三个参数传递是引用，所以要使用取指符
 	PlayerInputComponent->BindAxis("PacManMoveX", this, &APacManCharacter::MoveX);
 	PlayerInputComponent->BindAxis("PacManMoveY", this, &APacManCharacter::MoveY);
+
+	PlayerInputComponent->BindAction("NewGame", IE_Pressed, this, &APacManCharacter::NewGame);
+	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &APacManCharacter::Restart);
+	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &APacManCharacter::Pause);
+
 }
 
 void APacManCharacter::MoveX(float Value)
@@ -49,14 +57,27 @@ void APacManCharacter::MoveY(float Value)
 
 void APacManCharacter::ReStart()
 {
+	GetWorld()->GetFirstPlayerController()->ConsoleCommand(TEXT("RestartLevel"));
 }
 
 void APacManCharacter::NewGame()
 {
+	if (GameMode->GetCurrentState == EGameState::EMenu)
+	{
+		GameMode->SetCurrentState(EGameState::EPlaying);
+	}
 }
 
 void APacManCharacter::Pause()
 {
+	if (GameMode->GetCurrentState == EGameState::EPlaying)
+	{
+		GameMode->SetCurrentState(EGameState::EPause);
+	}
+	else if (GameMode->GetCurrentState == EGameState::EPlause)
+	{
+		GameMode->SetCurrentState(EGameState::EPlaying);
+	}
 }
 
 //整理代码快捷键 Ctrl+K Ctrl+F

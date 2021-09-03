@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "TutDroneGameModeBase.h"
 #include "PacManCharacter.generated.h"
 
 UCLASS()
@@ -37,7 +38,8 @@ public:
 	void NewGame();
 
 	void Pause();
-
+private:
 	FVector CurrentVelocity;
+	ATutDroneGameModeBase* GameMode;
 
 };
