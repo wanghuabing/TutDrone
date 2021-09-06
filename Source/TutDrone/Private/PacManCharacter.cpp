@@ -1,8 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "PacManCharacter.h"
-#include "TutDroneGameModeBase.h"
+#include "../TutDroneGameModeBase.h"
+#include "Collectables.h"
+#include "Components/CapsuleComponent.h"
+#include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -10,37 +12,49 @@ APacManCharacter::APacManCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
 void APacManCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	//½«ÊµÀı×ª»¯ÁË
+
+	Lives = 3;
+	StartPoint = GetActorLocation();
+	//æ‰“å° å‘é‡è½¬åŒ–ä¸ºå­—ç¬¦ä¸²
+	UE_LOG(LogTemp, Warning, TEXT("Start Point is %s"), *StartPoint.ToString());
+	//å°†å®ä¾‹è½¬åŒ–äº†
 	GameMode = Cast<ATutDroneGameModeBase>(UGameplayStatics::GetGameMode(this));
+	// FComponentBeginOverlapSignature, UPrimitiveComponent, OnComponentBeginOverlap,
+	//
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &APacManCharacter::OnBeginOverlap);
+
+	//è¿­ä»£å™¨	ç»Ÿè®¡worldé‡Œé¢ä¸€å…±æœ‰å¤šå°‘ä¸ªCollectable
+	for (TActorIterator<ACollectables> CollectableItr(GetWorld()); CollectableItr; ++CollectableItr)
+	{
+		CollectablesToEat++;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("Total Collectable is %d"), CollectablesToEat);
 }
 
 // Called every frame
 void APacManCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
-void APacManCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APacManCharacter::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	//°ó¶¨
-	//µÚÈı¸ö²ÎÊı´«µİÊÇÒıÓÃ£¬ËùÒÔÒªÊ¹ÓÃÈ¡Ö¸·û
+	//ç»‘å®š
+	//ç¬¬ä¸‰ä¸ªå‚æ•°ä¼ é€’æ˜¯å¼•ç”¨ï¼Œæ‰€ä»¥è¦ä½¿ç”¨å–æŒ‡ç¬¦
 	PlayerInputComponent->BindAxis("PacManMoveX", this, &APacManCharacter::MoveX);
 	PlayerInputComponent->BindAxis("PacManMoveY", this, &APacManCharacter::MoveY);
 
 	PlayerInputComponent->BindAction("NewGame", IE_Pressed, this, &APacManCharacter::NewGame);
-	PlayerInputComponent->BindAction("Restart", IE_Pressed, this, &APacManCharacter::Restart);
+	PlayerInputComponent->BindAction("ReStart", IE_Pressed, this, &APacManCharacter::ReStart);
 	PlayerInputComponent->BindAction("Pause", IE_Pressed, this, &APacManCharacter::Pause);
-
 }
 
 void APacManCharacter::MoveX(float Value)
@@ -62,7 +76,7 @@ void APacManCharacter::ReStart()
 
 void APacManCharacter::NewGame()
 {
-	if (GameMode->GetCurrentState == EGameState::EMenu)
+	if (GameMode->GetCurrentState() == EGameState::EMenu)
 	{
 		GameMode->SetCurrentState(EGameState::EPlaying);
 	}
@@ -70,14 +84,41 @@ void APacManCharacter::NewGame()
 
 void APacManCharacter::Pause()
 {
-	if (GameMode->GetCurrentState == EGameState::EPlaying)
+	if (GameMode->GetCurrentState() == EGameState::EPlaying)
 	{
 		GameMode->SetCurrentState(EGameState::EPause);
 	}
-	else if (GameMode->GetCurrentState == EGameState::EPlause)
+	else if (GameMode->GetCurrentState() == EGameState::EPause)
 	{
 		GameMode->SetCurrentState(EGameState::EPlaying);
 	}
 }
 
-//ÕûÀí´úÂë¿ì½İ¼ü Ctrl+K Ctrl+F
+void APacManCharacter::Killed()
+{
+	if (--Lives == 0)
+	{
+		GameMode->SetCurrentState(EGameState::EGameOver);
+	}else
+	{
+		SetActorLocation(StartPoint);
+	}
+}
+
+void APacManCharacter::OnBeginOverlap(UPrimitiveComponent *OverlappedComponent, AActor *OtherActor, UPrimitiveComponent *OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult &SweepResult)
+{
+	if (GameMode->GetCurrentState() == EGameState::EPlaying)
+	{
+		if (OtherActor->IsA(ACollectables::StaticClass()))
+		{
+			OtherActor->Destroy();
+			if (CollectablesToEat > 0)
+			{
+				CollectablesToEat--;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("Remain Collectable is %d"), CollectablesToEat);
+		}
+	}
+}
+
+//æ•´ç†ä»£ç å¿«æ·é”® Ctrl+K Ctrl+F

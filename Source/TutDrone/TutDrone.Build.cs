@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -9,7 +9,7 @@ public class TutDrone : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
-		//ÒıÈëÁËEngine...Ä£¿é
+		//å¼•å…¥äº†Engine...æ¨¡å—
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

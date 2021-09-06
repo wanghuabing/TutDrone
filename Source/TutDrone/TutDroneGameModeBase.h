@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -29,14 +29,16 @@ private:
 
 public:
 
-	EGameState GetCurrentState() const;//²»ÄÜĞŞ¸Äµ±Ç°³ÉÔ±£¬ËùÒÔÊ¹ÓÃconst¹Ø¼ü×Ö
+	EGameState GetCurrentState() const;//ä¸èƒ½ä¿®æ”¹å½“å‰æˆå‘˜ï¼Œæ‰€ä»¥ä½¿ç”¨constå…³é”®å­—
 	void SetCurrentState(EGameState value);
 
+	virtual void BeginPlay() override;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		int32 Point;//uint32 ²»±»À¶Í¼Ö§³Ö
+		int32 Point;//uint32 ä¸è¢«è“å›¾æ”¯æŒ
 };
 
-//Ê¹ÓÃÄÚÁª Ìá¸ßº¯ÊıµÄÖ´ĞĞĞ§ÂÊ
+//ä½¿ç”¨å†…è” æé«˜å‡½æ•°çš„æ‰§è¡Œæ•ˆç‡
 FORCEINLINE EGameState ATutDroneGameModeBase::GetCurrentState() const {
 	return currentState;
 }

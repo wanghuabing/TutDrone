@@ -16,9 +16,9 @@ ADrone::ADrone()
 	OutCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("OutCollision"));
 	RootComponent = OutCollision;
 	OutCollision->SetBoxExtent(FVector(100.0f, 100.0f, 100.f));
-	OutCollision->SetSimulatePhysics(true);//ÉèÖÃÆôÓÃÄ£ÄâÎïÀí
+	OutCollision->SetSimulatePhysics(true);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	OutCollision->BodyInstance.bLockXRotation = true;
-	OutCollision->BodyInstance.bLockYRotation = true;//Ëø¶¨Ðý×ª
+	OutCollision->BodyInstance.bLockYRotation = true;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª
 
 	//Mesh->SetupAttachment(RootComponent);
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -40,9 +40,9 @@ ADrone::ADrone()
 
 	UpThruster = CreateDefaultSubobject<UPhysicsThrusterComponent>(TEXT("UpThruster"));
 	UpThruster->SetupAttachment(RootComponent);
-	UpThruster->ThrustStrength = 980.0f;//ÖØÁ¦¼ÓËÙ¶È
+	UpThruster->ThrustStrength = 980.0f;//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 	UpThruster->SetAutoActivate(true);
-	UpThruster->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(-this->GetActorUpVector())); //ÉèÖÃµ±Ç°ÎïÌå³¯ÏÂÊ±ºòµÄrotation
+	UpThruster->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(-this->GetActorUpVector())); //ï¿½ï¿½ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½å³¯ï¿½ï¿½Ê±ï¿½ï¿½ï¿½rotation
 
 	ForwarThruster = CreateDefaultSubobject<UPhysicsThrusterComponent>(TEXT("ForwarThruster"));
 	ForwarThruster->SetupAttachment(RootComponent);
@@ -50,7 +50,7 @@ ADrone::ADrone()
 	ForwarThruster->SetAutoActivate(true);
 	ForwarThruster->SetWorldRotation(UKismetMathLibrary::MakeRotFromX(-this->GetActorForwardVector()));
 
-	//AttachToComponent²»ÄÜ·Åµ½¹¹Ôìº¯ÊýÀïÃæÖ´ÐÐ
+	//AttachToComponentï¿½ï¿½ï¿½Ü·Åµï¿½ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ï¿½
 }
 
 // Called when the game starts or when spawned
@@ -85,7 +85,7 @@ void ADrone::Tick(float DeltaTime)
 			}
 			else
 			{
-				//¸ººÅ ½øÐÐÓëÔ­·½ÏòÏà·´µÄÆ«ÒÆ
+				//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½à·´ï¿½ï¿½Æ«ï¿½ï¿½
 				Mesh->AddRelativeRotation(FRotator(-currentPitch * DeltaTime, .0f, .0f));
 			}
 		}
@@ -107,8 +107,8 @@ void ADrone::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void ADrone::Lift(float value)
 {
-	//Ã¿Ò»Ö¡¶¼²»¶ÏµÄ¸øÕâ¸öÁ¦Ôö¼Ó
-	//Éæ¼°µ½ºÍÃ¿Ò»Ö¡ÓÐ¹ØµÄ£¬Ó¦¿¼ÂÇ²»Í¬Ö¡ÂÊ¶ÔËüµÄÓ°Ïì
+	//Ã¿Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÄ¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//ï¿½æ¼°ï¿½ï¿½ï¿½ï¿½Ã¿Ò»Ö¡ï¿½Ð¹ØµÄ£ï¿½Ó¦ï¿½ï¿½ï¿½Ç²ï¿½Í¬Ö¡ï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½
 
 	/*this->GetWorld()->DeltaTimeSeconds <==> TempDeltaTime*/
 	UpThruster->ThrustStrength += (LiftAcc * value * TempDeltaTime);
