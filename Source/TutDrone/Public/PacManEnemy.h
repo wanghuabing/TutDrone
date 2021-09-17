@@ -21,13 +21,37 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	
+
 	UPROPERTY(VisibleAnyWhere, Category = body)
-	UStaticMeshComponent *EnemyBody;
+		UStaticMeshComponent* EnemyBody;
+
+
+	bool bIsDead;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent *PlayerInputComponent) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	class UMaterialInterface* DefaultMaterial;
+	class UMaterialInterface* VulnerableMaterial;
+	FTimerHandle TimeVulnerable;
+	
+	bool bIsVulnerable;
+	
+
+
+	void SetVulnerable();
+
+	void SetInVulnerable();
+
+	void SetMove(bool bMoveIt); 
+
+	void Killed();
+
+	void ReArm();
+
+	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };
